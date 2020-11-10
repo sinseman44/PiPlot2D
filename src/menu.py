@@ -19,7 +19,10 @@ class menu:
     cmd_menu = ['..',
                 'Homing',
                 'Set up Pen',
-                'Set down Pen']
+                'Set down Pen',
+                'Set 1cm X axis',
+                'Set 1cm Y axis',
+                'Set rectangle']
 
     files_menu = ['..']
 
@@ -62,7 +65,6 @@ class menu:
         self.lcd.write_string('\x00')
         self.__refresh_menu()
 
-
     def __homing(self):
         ''' set homing command '''
         self.lcd.clear()
@@ -97,6 +99,53 @@ class menu:
         with open("/tmp/set_down_pen.gcode", 'w') as f:
             f.write("M300 S30 (DOWN Pen)")
         os.system("sudo python /home/pi/PyCNC/pycnc /tmp/set_down_pen.gcode")
+        self.lcd.clear()
+        self.lcd.cursor_pos = (self.current_cursor % self.max_rows, 0)
+        self.lcd.write_string('\x00')
+        self.__refresh_menu()
+
+    def __set_line_1cm(self, axis='X'):
+        ''' set a 1cm line in X or Y axis '''
+        self.lcd.clear()
+        self.lcd.home()
+        self.lcd.write_string("   waiting ...")
+        with open("/tmp/set_line.gcode", 'w') as f:
+            f.write("M300 S50 (UP Pen)\n")
+            f.write("G28 (Homing)\n")
+            f.write("G1 X10 Y10 F1000.0\n")
+            f.write("M300 S30 (DOWN Pen)\n")
+            if axis.startswith('X'):
+                f.write("G1 Y15 F1000.0\n")
+                f.write("G1 Y12.5 F1000.0\n")
+                f.write("G1 X20 F1000.0\n")
+                f.write("G1 Y10 F1000.0\n")
+                f.write("G1 Y15 F1000.0\n")
+            elif axis.startswith('Y'):
+                f.write("G1 X15 F1000.0\n")
+                f.write("G1 X12.5 F1000.0\n")
+                f.write("G1 Y20 F1000.0\n")
+                f.write("G1 X10 F1000.0\n")
+                f.write("G1 X15 F1000.0\n")
+            f.write("M300 S50 (UP Pen)\n")
+            f.write("G28 (Homing)\n")
+        os.system("sudo python /home/pi/PyCNC/pycnc /tmp/set_line.gcode")
+        self.lcd.clear()
+        self.lcd.cursor_pos = (self.current_cursor % self.max_rows, 0)
+        self.lcd.write_string('\x00')
+        self.__refresh_menu()
+
+    def __set_rect(self):
+        ''' set a rectangle '''
+        self.lcd.clear()
+        self.lcd.home()
+        self.lcd.write_string("   waiting ...")
+        with open("/tmp/set_rect.gcode", 'w') as f:
+            f.write("G28 (Homing)\n")
+            f.write("G1 X30 Y0 F2000.0\n")
+            f.write("G1 X30 Y30 F2000.0\n")
+            f.write("G1 X0 Y30 F2000.0\n")
+            f.write("G1 X0 Y0 F2000.0\n")
+        os.system("sudo python /home/pi/PyCNC/pycnc /tmp/set_rect.gcode")
         self.lcd.clear()
         self.lcd.cursor_pos = (self.current_cursor % self.max_rows, 0)
         self.lcd.write_string('\x00')
@@ -162,6 +211,12 @@ class menu:
                     self.__set_up_pen()
                 elif self.current_menu[self.current_cursor].startswith('Set down Pen'):
                     self.__set_down_pen()
+                elif self.current_menu[self.current_cursor].startswith('Set 1cm X axis'):
+                    self.__set_line_1cm('X')
+                elif self.current_menu[self.current_cursor].startswith('Set 1cm Y axis'):
+                    self.__set_line_1cm('Y')
+                elif self.current_menu[self.current_cursor].startswith('Set rectangle'):
+                    self.__set_rect()
             elif self.current_menu == self.files_menu:
                 if not self.current_menu[self.current_cursor].startswith('..'):
                     self.__drawing(self.current_menu[self.current_cursor])
@@ -170,4 +225,3 @@ class menu:
                 self.current_menu = self.main_menu
                 self.current_cursor = 0
                 self.init_menu()
-
