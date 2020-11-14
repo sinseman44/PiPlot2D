@@ -19,8 +19,9 @@ setuptools.setup(
         "Operating System :: Linux",
     ],
     install_requires=[
-          'RPi.GPIO',
-          'RPLCD',
+        'RPi.GPIO',
+        'RPLCD',
+        'PyCNC @ https://github.com/sinseman44/PyCNC/archive/v2.0.0.tar.gz'
     ],
     python_requires='>=3.6',
 )
