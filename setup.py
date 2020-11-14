@@ -11,8 +11,8 @@ setuptools.setup(
     description="Control PiPlot2D system",
     long_description="Control PiPlot2D system",
     long_description_content_type="text/markdown",
-    url="https://github.com/pypa/sampleproject",
-    packages=setuptools.find_packages(),
+    url="https://github.com/sinseman44/PiPlot2D",
+    packages=setuptools.find_packages(where='src'),
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
