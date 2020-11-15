@@ -3,6 +3,7 @@
 import os
 import sys
 import time
+import logging
 import RPi.GPIO as GPIO
 from RPLCD.gpio import CharLCD
 from piplot.config import *
@@ -76,14 +77,17 @@ def init():
         GPIO.add_event_detect(PG_OK, GPIO.RISING, callback=pg_ok_cb, bouncetime=50)
     except:
         e = sys.exc_info()[1]
-        print("Error : {}".format(e))
+        logging.error("Error : {}".format(e))
         sys.exit(1)
     menu.init_menu()
 
 def main():
+    logging.basicConfig(filename='/var/log/PiPlot2D.log', level=logging.INFO)
+    logging.info("*** Launch PiPlot2D Menu & Control ***")
     init()
     while True:
         time.sleep(1)
+    logging.info("*** Exit PiPlot2D Menu & Control ***")
     lcd.close()
 
 ###################################################################

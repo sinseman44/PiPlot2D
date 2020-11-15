@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os, sys
+import logging
 
 ###################################################################
 
@@ -35,6 +36,8 @@ class menu:
         self.max_rows = rows
         self.current_cursor = 0
         self.current_menu = self.main_menu 
+        logging.info("PyCNC path : {}".format(self.pycnc_path))
+        logging.info("Gcode repository path : {}".format(self.gcode_path))
         for dirs,r,files in os.walk(self.gcode_path):
             for f in files:
                 if len(f) > 14:
@@ -62,6 +65,7 @@ class menu:
         self.lcd.home()
         self.lcd.write_string("   drawing ...")
         os.system(self.pycnc_path + ' ' + os.path.join(self.gcode_path, filename))
+        logging.info("drawing : {}".format(os.path.join(self.gcode_path, filename)))
         self.lcd.clear()
         self.lcd.cursor_pos = (self.current_cursor % self.max_rows, 0)
         self.lcd.write_string('\x00')
@@ -83,6 +87,7 @@ class menu:
     def __homing(self):
         ''' set homing command '''
         self.__pre_cmd()
+        logging.debug("homing")
         with open("/tmp/homing.gcode", 'w') as f:
             f.write("G28 (Homing)")
         os.system(self.pycnc_path + ' ' + os.path.join("/tmp/homing.gcode"))
@@ -91,6 +96,7 @@ class menu:
     def __set_up_pen(self):
         ''' set up pen '''
         self.__pre_cmd()
+        logging.debug("set up pen")
         with open("/tmp/set_up_pen.gcode", 'w') as f:
             f.write("M300 S50 (UP Pen)")
         os.system(self.pycnc_path + ' ' + os.path.join("/tmp/set_up_pen.gcode"))
@@ -99,6 +105,7 @@ class menu:
     def __set_down_pen(self):
         ''' set down pen '''
         self.__pre_cmd()
+        logging.debug("set down pen")
         with open("/tmp/set_down_pen.gcode", 'w') as f:
             f.write("M300 S30 (DOWN Pen)")
         os.system(self.pycnc_path + ' ' + os.path.join("/tmp/set_down_pen.gcode"))
@@ -107,6 +114,7 @@ class menu:
     def __set_line_1cm(self, axis='X'):
         ''' set a 1cm line in X or Y axis '''
         self.__pre_cmd()
+        logging.debug("set 1cm Line")
         with open("/tmp/set_line.gcode", 'w') as f:
             f.write("M300 S50 (UP Pen)\n")
             f.write("G28 (Homing)\n")
@@ -132,6 +140,7 @@ class menu:
     def __set_rect(self):
         ''' set a rectangle '''
         self.__pre_cmd()
+        logging.debug("set rectangle")
         with open("/tmp/set_rect.gcode", 'w') as f:
             f.write("G28 (Homing)\n")
             f.write("G1 X30 Y0 F2000.0\n")
@@ -183,12 +192,14 @@ class menu:
                 self.lcd.clear()
                 self.lcd.home()
                 self.lcd.write_string("   Bye Bye ...")
+                logging.info("poweroff")
                 os.system('sudo systemctl poweroff')
                 exit(0)
             elif self.current_menu[self.current_cursor].startswith('Reboot'):
                 self.lcd.clear()
                 self.lcd.home()
                 self.lcd.write_string("   Bye Bye ...")
+                logging.info("reboot")
                 os.system('sudo systemctl reboot')
                 exit(0)
             self.current_cursor = 0
@@ -209,6 +220,7 @@ class menu:
                     self.__set_rect()
             elif self.current_menu == self.files_menu:
                 if not self.current_menu[self.current_cursor].startswith('..'):
+                    logging.debug("choose : {}".format(self.current_menu[self.current_cursor]))
                     self.__drawing(self.current_menu[self.current_cursor])
 
             if self.current_menu[self.current_cursor].startswith('..'):
