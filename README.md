@@ -1,5 +1,7 @@
 # PiPlot2D
 
+[image](https://github.com/sinseman44/PiPlot2D/.github/images/PiPlot2D.png)
+
 PiPlot2D est un système de plotter 2D construit à partir de deux anciens lecteurs de DVD-Rom, contrôlé par une raspberry pi 1.2b et d'un logiciel écrit en full python
 PyCNC.
 Ce logiciel permet d'interpreter du gcode en mouvement moteur sur les axes X, Y et Z.
@@ -13,6 +15,13 @@ Il permet de sélectionner les fichiers .gcode à dessiner par le système.
 
 ## Installation
 
+### Dépendances
+PiPlot2D à besoin d'un accès internet pour télécharger les dépendances suivantes :
+* RPi.GPIO
+* RPLCD
+* PyCNC
+
+### Instructions
 ```
 $ sudo python3 setup.py install
 ```
