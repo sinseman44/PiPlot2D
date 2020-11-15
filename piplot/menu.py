@@ -61,7 +61,7 @@ class menu:
         self.lcd.clear()
         self.lcd.home()
         self.lcd.write_string("   drawing ...")
-        os.system(self.pycnc_path + os.path.join(self.gcode_path, filename))
+        os.system(self.pycnc_path + ' ' + os.path.join(self.gcode_path, filename))
         self.lcd.clear()
         self.lcd.cursor_pos = (self.current_cursor % self.max_rows, 0)
         self.lcd.write_string('\x00')
@@ -85,7 +85,7 @@ class menu:
         self.__pre_cmd()
         with open("/tmp/homing.gcode", 'w') as f:
             f.write("G28 (Homing)")
-        os.system(self.pycnc_path + os.path.join("/tmp/homing.gcode"))
+        os.system(self.pycnc_path + ' ' + os.path.join("/tmp/homing.gcode"))
         self.__post_cmd()
 
     def __set_up_pen(self):
@@ -93,7 +93,7 @@ class menu:
         self.__pre_cmd()
         with open("/tmp/set_up_pen.gcode", 'w') as f:
             f.write("M300 S50 (UP Pen)")
-        os.system(self.pycnc_path + os.path.join("/tmp/set_up_pen.gcode"))
+        os.system(self.pycnc_path + ' ' + os.path.join("/tmp/set_up_pen.gcode"))
         self.__post_cmd()
 
     def __set_down_pen(self):
@@ -101,7 +101,7 @@ class menu:
         self.__pre_cmd()
         with open("/tmp/set_down_pen.gcode", 'w') as f:
             f.write("M300 S30 (DOWN Pen)")
-        os.system(self.pycnc_path + os.path.join("/tmp/set_down_pen.gcode"))
+        os.system(self.pycnc_path + ' ' + os.path.join("/tmp/set_down_pen.gcode"))
         self.__post_cmd()
 
     def __set_line_1cm(self, axis='X'):
@@ -126,7 +126,7 @@ class menu:
                 f.write("G1 X15 F1000.0\n")
             f.write("M300 S50 (UP Pen)\n")
             f.write("G28 (Homing)\n")
-        os.system(self.pycnc_path + os.path.join("/tmp/set_line.gcode"))
+        os.system(self.pycnc_path + ' ' + os.path.join("/tmp/set_line.gcode"))
         self.__post_cmd()
 
     def __set_rect(self):
@@ -138,7 +138,7 @@ class menu:
             f.write("G1 X30 Y30 F2000.0\n")
             f.write("G1 X0 Y30 F2000.0\n")
             f.write("G1 X0 Y0 F2000.0\n")
-        os.system(self.pycnc_path + os.path.join("/tmp/set_rect.gcode"))
+        os.system(self.pycnc_path + ' ' + os.path.join("/tmp/set_rect.gcode"))
         self.__post_cmd()
 
     def init_menu(self):
