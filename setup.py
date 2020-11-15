@@ -21,7 +21,10 @@ setuptools.setup(
     install_requires=[
         'RPi.GPIO',
         'RPLCD',
-        'PyCNC @ https://github.com/sinseman44/PyCNC/archive/v2.0.0.tar.gz'
+        'PyCNC<=2.0.0'
+    ],
+    dependency_links=[
+        "https://github.com/sinseman44/PyCNC/archive/v2.0.0.zip#egg=pycnc-2.0.0",
     ],
     python_requires='>=3.6',
 )
