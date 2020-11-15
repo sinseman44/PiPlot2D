@@ -1,6 +1,6 @@
 # PiPlot2D
 
-[image](https://github.com/sinseman44/PiPlot2D/.github/images/PiPlot2D.png)
+[image](https://github.com/sinseman44/PiPlot2D/blob/main/.github/images/PiPlot2D.png)
 
 PiPlot2D est un système de plotter 2D construit à partir de deux anciens lecteurs de DVD-Rom, contrôlé par une raspberry pi 1.2b et d'un logiciel écrit en full python
 PyCNC.
@@ -29,3 +29,5 @@ $ sudo python3 setup.py install
 ```
 $ sudo python3 setup.py install_service
 ```
+
+Redemarrer le système pour voir apparaitre le menu ...
