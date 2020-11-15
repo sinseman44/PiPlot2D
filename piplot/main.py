@@ -5,8 +5,8 @@ import sys
 import time
 import RPi.GPIO as GPIO
 from RPLCD.gpio import CharLCD
-from src.config import *
-from src.menu import menu
+from piplot.config import *
+from piplot.menu import menu
 
 ###################################################################
 

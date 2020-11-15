@@ -1,9 +1,9 @@
-import setuptools
+from setuptools import setup, find_packages
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-setuptools.setup(
+setup(
     name="PiPlot2D",
     version="0.0.1",
     author="sinseman44",
@@ -12,7 +12,8 @@ setuptools.setup(
     long_description="Control PiPlot2D system",
     long_description_content_type="text/markdown",
     url="https://github.com/sinseman44/PiPlot2D",
-    packages=setuptools.find_packages(where='piplot'),
+    #packages=setuptools.find_packages(where='piplot'),
+    packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
