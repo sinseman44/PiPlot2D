@@ -68,6 +68,10 @@ def pg_ok_cb(channel):
 
 def init():
     ''' init pins and display main menu '''
+    if not os.path.exists(GCODE_REPO):
+        logging.error("Path {} doesn't exist".format(GCODE_REPO))
+        sys.exit(1)
+
     try:
         GPIO.setup(PG_UP, GPIO.IN)
         GPIO.setup(PG_DOWN, GPIO.IN)
