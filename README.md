@@ -13,6 +13,8 @@ Ce système se contrôle via une interface homme machine basique composée d'un 
 .
 Il permet de sélectionner les fichiers .gcode à dessiner par le système.
 
+![display](https://github.com/sinseman44/PiPlot2D/blob/main/.github/images/display.png)
+
 ## Installation
 
 ### Dépendances
