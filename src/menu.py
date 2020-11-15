@@ -26,14 +26,16 @@ class menu:
 
     files_menu = ['..']
 
-    def __init__(self, lcd=None, cols=0, rows=0):
+    def __init__(self, lcd=None, cols=0, rows=0, pycnc="", gcode_path=""):
         ''' constructor '''
         self.lcd = lcd
+        self.pycnc_path=pycnc
+        self.gcode_path=gcode_path
         self.max_cols = cols
         self.max_rows = rows
         self.current_cursor = 0
         self.current_menu = self.main_menu 
-        for dirs,r,files in os.walk("/srv/ftp"):
+        for dirs,r,files in os.walk(self.gcode_path):
             for f in files:
                 if len(f) > 14:
                     f = f[:13]+'~'
@@ -59,7 +61,20 @@ class menu:
         self.lcd.clear()
         self.lcd.home()
         self.lcd.write_string("   drawing ...")
-        os.system("sudo python /home/pi/PyCNC/pycnc " + os.path.join("/srv/ftp/", filename))
+        os.system(self.pycnc_path + os.path.join(self.gcode_path, filename))
+        self.lcd.clear()
+        self.lcd.cursor_pos = (self.current_cursor % self.max_rows, 0)
+        self.lcd.write_string('\x00')
+        self.__refresh_menu()
+
+    def __pre_cmd(self):
+        ''' pre command '''
+        self.lcd.clear()
+        self.lcd.home()
+        self.lcd.write_string("   waiting ...")
+
+    def __post_cmd(self):
+        ''' post command '''
         self.lcd.clear()
         self.lcd.cursor_pos = (self.current_cursor % self.max_rows, 0)
         self.lcd.write_string('\x00')
@@ -67,48 +82,31 @@ class menu:
 
     def __homing(self):
         ''' set homing command '''
-        self.lcd.clear()
-        self.lcd.home()
-        self.lcd.write_string("   waiting ...")
+        self.__pre_cmd()
         with open("/tmp/homing.gcode", 'w') as f:
             f.write("G28 (Homing)")
-        os.system("sudo python /home/pi/PyCNC/pycnc /tmp/homing.gcode")
-        self.lcd.clear()
-        self.lcd.cursor_pos = (self.current_cursor % self.max_rows, 0)
-        self.lcd.write_string('\x00')
-        self.__refresh_menu()
+        os.system(self.pycnc_path + os.path.join("/tmp/homing.gcode"))
+        self.__post_cmd()
 
     def __set_up_pen(self):
         ''' set up pen '''
-        self.lcd.clear()
-        self.lcd.home()
-        self.lcd.write_string("   waiting ...")
+        self.__pre_cmd()
         with open("/tmp/set_up_pen.gcode", 'w') as f:
             f.write("M300 S50 (UP Pen)")
-        os.system("sudo python /home/pi/PyCNC/pycnc /tmp/set_up_pen.gcode")
-        self.lcd.clear()
-        self.lcd.cursor_pos = (self.current_cursor % self.max_rows, 0)
-        self.lcd.write_string('\x00')
-        self.__refresh_menu()
+        os.system(self.pycnc_path + os.path.join("/tmp/set_up_pen.gcode"))
+        self.__post_cmd()
 
     def __set_down_pen(self):
         ''' set down pen '''
-        self.lcd.clear()
-        self.lcd.home()
-        self.lcd.write_string("   waiting ...")
+        self.__pre_cmd()
         with open("/tmp/set_down_pen.gcode", 'w') as f:
             f.write("M300 S30 (DOWN Pen)")
-        os.system("sudo python /home/pi/PyCNC/pycnc /tmp/set_down_pen.gcode")
-        self.lcd.clear()
-        self.lcd.cursor_pos = (self.current_cursor % self.max_rows, 0)
-        self.lcd.write_string('\x00')
-        self.__refresh_menu()
+        os.system(self.pycnc_path + os.path.join("/tmp/set_down_pen.gcode"))
+        self.__post_cmd()
 
     def __set_line_1cm(self, axis='X'):
         ''' set a 1cm line in X or Y axis '''
-        self.lcd.clear()
-        self.lcd.home()
-        self.lcd.write_string("   waiting ...")
+        self.__pre_cmd()
         with open("/tmp/set_line.gcode", 'w') as f:
             f.write("M300 S50 (UP Pen)\n")
             f.write("G28 (Homing)\n")
@@ -128,28 +126,20 @@ class menu:
                 f.write("G1 X15 F1000.0\n")
             f.write("M300 S50 (UP Pen)\n")
             f.write("G28 (Homing)\n")
-        os.system("sudo python /home/pi/PyCNC/pycnc /tmp/set_line.gcode")
-        self.lcd.clear()
-        self.lcd.cursor_pos = (self.current_cursor % self.max_rows, 0)
-        self.lcd.write_string('\x00')
-        self.__refresh_menu()
+        os.system(self.pycnc_path + os.path.join("/tmp/set_line.gcode"))
+        self.__post_cmd()
 
     def __set_rect(self):
         ''' set a rectangle '''
-        self.lcd.clear()
-        self.lcd.home()
-        self.lcd.write_string("   waiting ...")
+        self.__pre_cmd()
         with open("/tmp/set_rect.gcode", 'w') as f:
             f.write("G28 (Homing)\n")
             f.write("G1 X30 Y0 F2000.0\n")
             f.write("G1 X30 Y30 F2000.0\n")
             f.write("G1 X0 Y30 F2000.0\n")
             f.write("G1 X0 Y0 F2000.0\n")
-        os.system("sudo python /home/pi/PyCNC/pycnc /tmp/set_rect.gcode")
-        self.lcd.clear()
-        self.lcd.cursor_pos = (self.current_cursor % self.max_rows, 0)
-        self.lcd.write_string('\x00')
-        self.__refresh_menu()
+        os.system(self.pycnc_path + os.path.join("/tmp/set_rect.gcode"))
+        self.__post_cmd()
 
     def init_menu(self):
         ''' display menu '''
@@ -184,7 +174,7 @@ class menu:
             elif self.current_menu[self.current_cursor].startswith('Files'):
                 self.current_menu = self.files_menu
                 self.files_menu = ['..']
-                for dirs,r,files in os.walk("/srv/ftp"):
+                for dirs,r,files in os.walk(self.gcode_path):
                     for f in files:
                         if len(f) > 14:
                             f = f[:13]+'~'

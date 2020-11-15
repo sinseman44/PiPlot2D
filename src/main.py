@@ -10,7 +10,6 @@ from src.menu import menu
 
 ###################################################################
 
-end_flag = False 
 GPIO.setwarnings(False)
 lcd = CharLCD(pin_rs=LCD_RS, 
             pin_e=LCD_E, 
@@ -45,7 +44,11 @@ tilde = (
 )
 lcd.create_char(0, arrow)
 lcd.create_char(1, tilde)
-menu = menu(lcd, cols=NUM_COLS, rows=NUM_ROWS)
+menu = menu(lcd,
+            cols=NUM_COLS, 
+            rows=NUM_ROWS,
+            pycnc=PYCNC_EXEC,
+            gcode_path=GCODE_REPO)
 
 def pg_up_cb(channel):
     ''' page up button callback '''
