@@ -1,0 +1,12 @@
+[Unit]
+Description=piplot2D Display Menu and Control
+
+[Service]
+Type=simple
+User=root
+Group=root
+ExecStart=/usr/local/bin/piplotter
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
