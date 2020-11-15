@@ -10,7 +10,6 @@ class CustomInstallCommand(install):
         create_service_script_path = os.path.join(current_dir_path, 'install_scripts', 'create_service.sh')
         subprocess.check_output([create_service_script_path])
 
-
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
@@ -23,7 +22,10 @@ setup(
     long_description="Control PiPlot2D system",
     long_description_content_type="text/markdown",
     url="https://github.com/sinseman44/PiPlot2D",
-    #packages=setuptools.find_packages(where='piplot'),
+    scripts=['piplotter'],
+    cmdclass={
+        'install': CustomInstallCommand
+    },
     packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -39,6 +41,4 @@ setup(
         "https://github.com/sinseman44/PyCNC/archive/v2.0.0.zip#egg=pycnc-2.0.0",
     ],
     python_requires='>=3.6',
-    scripts=['piplotter'],
-    cmdclass={'install': CustomInstallCommand}
 )
